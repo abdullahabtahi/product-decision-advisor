@@ -6,10 +6,11 @@ import logging
 import re
 from pathlib import Path
 
-_logger = logging.getLogger(__name__)
-
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models.llm_request import LlmRequest
+from google.genai import types as genai_types
+
+_logger = logging.getLogger(__name__)
 
 SKILLS_DIR = Path(__file__).parent / "skills"
 
@@ -564,8 +565,6 @@ def _append_to_system_instruction(llm_request: LlmRequest, text: str) -> None:
     else:
         parts = list(getattr(si, "parts", []) or [])
         if parts and hasattr(parts[-1], "text"):
-            from google.genai import types as genai_types
-
             llm_request.config.system_instruction = genai_types.Content(
                 role=getattr(si, "role", "system"),
                 parts=[*parts[:-1], genai_types.Part(text=parts[-1].text + text)],
