@@ -1,6 +1,7 @@
 """Unit tests for skill_router."""
 
 from unittest.mock import MagicMock, patch
+import pytest
 
 class TestDetectSkill:
     """Keyword detection for all skills."""
@@ -320,6 +321,24 @@ class TestExtractContextSignals:
         from agent.skill_router import _extract_context_signals
         result = _extract_context_signals("We want to seed the idea with customers")
         assert result.get("stage") is None
+
+    @pytest.mark.parametrize(
+        "text,expected",
+        [
+            ("", {}),
+            ("   ", {}),
+            ("We're a B2B SaaS 🚀", {"company_type": "B2B SaaS"}),
+            ("we are a b2b saas startup", {"company_type": "B2B SaaS"}),
+            ("WE ARE AT SERIES A STAGE", {"stage": "Series A"}),
+            ("We have $ 50 k mrr", {"revenue": "$ 50 k mrr"}),
+            ("Our ARR is $50.5M ARR", {"revenue": "$50.5M ARR"}),
+            ("Revenue hit $1.5M monthly recurring revenue last month", {"revenue": "$1.5M monthly recurring revenue"}),
+            ("We have $1,000,000 annual recurring revenue", {"revenue": "$1,000,000 annual recurring revenue"}),
+        ],
+    )
+    def test_extract_context_signals_edge_cases(self, text, expected):
+        from agent.skill_router import _extract_context_signals
+        assert _extract_context_signals(text) == expected
 
 
 class TestCallbackInjection:
