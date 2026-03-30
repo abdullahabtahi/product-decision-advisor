@@ -188,6 +188,10 @@ class TestDetectSkill:
 class TestLoadSkill:
     """Skill file loading."""
 
+    def setup_method(self):
+        from agent.skill_router import load_skill
+        load_skill.cache_clear()
+
     def test_existing_skill_returns_content(self, tmp_path):
         from agent.skill_router import load_skill
         (tmp_path / "pricing-strategy.md").write_text("# Pricing\nContent.")
@@ -343,6 +347,10 @@ class TestExtractContextSignals:
 
 class TestCallbackInjection:
     """route_skill_callback correctly injects skill content into system_instruction."""
+
+    def setup_method(self):
+        from agent.skill_router import load_skill
+        load_skill.cache_clear()
 
     def _make_ctx(self, initial_state: dict | None = None):
         """Build a callback context mock with a real dict for state."""

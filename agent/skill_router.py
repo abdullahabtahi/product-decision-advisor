@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import logging
 import re
 from pathlib import Path
@@ -583,6 +584,7 @@ def detect_skill(user_message: str) -> str | None:
     return None
 
 
+@functools.lru_cache(maxsize=None)
 def load_skill(skill_name: str) -> str | None:
     """Return SKILL.md content (truncated), or None if not found."""
     path = SKILLS_DIR / f"{skill_name}.md"
