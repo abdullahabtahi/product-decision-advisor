@@ -1,0 +1,594 @@
+{
+  "eval_set_id": "product_advisor_eval",
+  "name": "Product Decision Advisor Evaluation",
+  "description": "21 eval cases: core PM decisions, new skill coverage (working-backwards, PRDs, GTM, AI strategy, startup, competitive, onboarding, scoping), multi-turn context continuity, compound questions, and off-topic scope compliance. Validates MCP tool usage (\u22642 search calls), episode citations, concrete steps, and graceful scope handling.",
+  "eval_cases": [
+    {
+      "eval_id": "pricing_self_serve_saas",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "How should I price my self-serve B2B SaaS product?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "reduce_churn",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "We're seeing 8% monthly churn. How do I reduce churn and improve retention?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "roadmap_prioritization",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "I have 20 feature requests from customers. How do I prioritize my product roadmap?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "out_of_scope_decline",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "What's the weather like in San Francisco today?"
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "I focus on product decisions"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "growth_loop_design",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "How do I design a viral growth loop for my B2C consumer app?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "working_backwards_press_release",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "How do I use the working backwards / press release method to define a new product feature?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "writing_prd_new_feature",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "I need to write a PRD for our new checkout flow redesign. What should it include and how should I structure it?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "launch_go_to_market",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "We're launching our B2B SaaS product in 6 weeks. How do I build a go-to-market strategy?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "ai_feature_decision",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Should I add an AI feature to my product? My users have been asking for it but I'm not sure it's worth the engineering investment."
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "startup_idea_validation",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "I have three startup ideas and I'm not sure which one to pursue. How do I validate them before committing?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "competitive_moat_strategy",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "How do I build a defensible competitive moat for my SaaS product against larger competitors?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "user_onboarding_activation",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Our day-7 retention is only 20%. What should I focus on to improve user onboarding and reach the aha moment faster?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "scoping_mvp_v1",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "My team wants to build 10 features for our v1 launch but we can realistically ship 3. How do I decide what to cut?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "multi_turn_growth_then_pricing",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "We're a B2B SaaS at $50k MRR with strong NPS. What growth strategies should I focus on to reach $500k MRR?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        },
+        {
+          "invocation_id": "inv_2",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Given what we discussed, how should I adjust my pricing to support that growth?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "compound_acquisition_and_retention",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Our CAC is high and retention is also poor \u2014 how do I tackle both user acquisition and churn at the same time?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "north_star_metric_definition",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "How do I define the right north star metric for my product?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "tech_debt_business_case",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "How do I make the business case to leadership for investing time in technical debt reduction?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "product_market_fit_signals",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "How do I know if I've achieved product-market fit? What signals should I look for?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "b2b_customer_discovery",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "How do I run effective customer discovery interviews for a B2B product I'm still building?"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "search_transcripts"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "off_topic_performance_review",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Can you help me write a performance review for my software engineer?"
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "I focus on product decisions"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "off_topic_legal_question",
+      "conversation": [
+        {
+          "invocation_id": "inv_1",
+          "user_content": {
+            "parts": [
+              {
+                "text": "What are the employment laws I need to know for hiring remote contractors in California?"
+              }
+            ]
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "I focus on product decisions"
+              }
+            ]
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "agent",
+        "user_id": "eval_user",
+        "state": {}
+      }
+    }
+  ]
+}

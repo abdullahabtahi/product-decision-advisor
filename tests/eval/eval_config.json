@@ -1,0 +1,62 @@
+{
+  "criteria": {
+    "hallucinations_v1": {
+      "threshold": 0.7,
+      "judge_model_options": {
+        "judge_model": "gemini-3-flash-preview",
+        "num_samples": 3
+      }
+    },
+    "rubric_based_final_response_quality_v1": {
+      "threshold": 0.7,
+      "judge_model_options": {
+        "judge_model": "gemini-3-flash-preview",
+        "num_samples": 3
+      },
+      "rubrics": [
+        {
+          "rubric_id": "clear_recommendation",
+          "rubric_content": {
+            "text_property": "The response gives a clear, opinionated recommendation and does not just say 'it depends' without a concrete stance. OR if the question is out of scope, the response gives a clear, concise decline redirecting the user to product decisions."
+          }
+        },
+        {
+          "rubric_id": "episode_citation",
+          "rubric_content": {
+            "text_property": "The response cites at least one specific Lenny Podcast guest by name as a source of evidence. OR if the question is out of scope and the agent declines gracefully without searching, this criterion is automatically satisfied."
+          }
+        },
+        {
+          "rubric_id": "concrete_steps",
+          "rubric_content": {
+            "text_property": "The response ends with something actionable — this may be a numbered list of steps, a single critical next action, or a reframing question that helps the user move forward. The form may vary; what matters is that the response does not end without any actionable guidance. OR if the question is out of scope and the agent declines gracefully, this criterion is automatically satisfied."
+          }
+        },
+        {
+          "rubric_id": "scope_compliance",
+          "rubric_content": {
+            "text_property": "The response stays focused on product/PM decisions and declines gracefully if the question is out of scope (e.g., weather, legal, HR, finance). Out-of-scope declines must be clear and redirect the user toward product decisions."
+          }
+        },
+        {
+          "rubric_id": "guest_not_hallucinated",
+          "rubric_content": {
+            "text_property": "Any podcast guest cited by name must be a real, plausible product/tech/startup leader who could credibly appear on Lenny's Podcast (e.g., PM leaders, growth practitioners, startup founders, operators). The response must not invent fictional guest names or fabricate credentials. If no guests are cited, this criterion is automatically satisfied."
+          }
+        },
+        {
+          "rubric_id": "evidence_grounded",
+          "rubric_content": {
+            "text_property": "For product/PM questions, the response must show it searched for evidence (demonstrated by citing real guests or episodes by name with specific insights). The agent must NOT answer PM questions purely from general knowledge without any podcast evidence. For out-of-scope declines, this criterion is automatically satisfied."
+          }
+        },
+        {
+          "rubric_id": "confidence_calibrated",
+          "rubric_content": {
+            "text_property": "The response includes a confidence signal (High/Medium/Low), either as a labeled field or woven naturally into the closing. It must be Low or Medium when the agent mentioned limited evidence, partial results, or fell back to frameworks. It must be High only when the agent found multiple relevant episodes. For out-of-scope declines, this criterion is automatically satisfied."
+          }
+        }
+      ]
+    }
+  }
+}
