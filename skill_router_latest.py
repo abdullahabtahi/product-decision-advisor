@@ -7,10 +7,10 @@ import logging
 import re
 from pathlib import Path
 
+_logger = logging.getLogger(__name__)
+
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models.llm_request import LlmRequest
-
-_logger = logging.getLogger(__name__)
 
 SKILLS_DIR = Path(__file__).parent / "skills"
 
@@ -584,7 +584,7 @@ def detect_skill(user_message: str) -> str | None:
     return None
 
 
-@functools.cache
+@functools.lru_cache(maxsize=None)
 def load_skill(skill_name: str) -> str | None:
     """Return SKILL.md content (truncated), or None if not found."""
     path = SKILLS_DIR / f"{skill_name}.md"
@@ -596,82 +596,6 @@ def load_skill(skill_name: str) -> str | None:
             content[:_SKILL_CHAR_LIMIT] + "\n\n[Framework truncated for context budget]"
         )
     return content
-
-
-def _get_latest_user_message(llm_request: LlmRequest) -> str:
-    """Find the latest user message in the conversation."""
-    for content in reversed(llm_request.contents or []):
-        if getattr(content, "role", None) == "user":
-            for part in getattr(content, "parts", []) or []:
-                text = getattr(part, "text", None)
-                if text:
-                    return text
-    return ""
-
-
-def _handle_context_extraction(
-    callback_context: CallbackContext,
-    llm_request: LlmRequest,
-    user_message: str,
-) -> None:
-    """Detect company context from user message, persist, and inject into system instruction."""
-    new_signals = _extract_context_signals(user_message)
-    if new_signals:
-        _logger.debug("context signals=%r", new_signals)
-        # Immutably merge new signals into stored context
-        stored = dict(callback_context.state.get(_USER_CONTEXT_KEY, {}))
-        stored.update(new_signals)
-        callback_context.state[_USER_CONTEXT_KEY] = stored
-
-    stored_context: dict[str, str] = callback_context.state.get(_USER_CONTEXT_KEY, {})
-    if stored_context:
-        lines = [
-            f"- {k.replace('_', ' ').title()}: {v}" for k, v in stored_context.items()
-        ]
-        context_note = (
-            "\n\n---\n## Session Context\n"
-            + "\n".join(lines)
-            + "\nApply this context to tailor recommendations."
-            " Do not ask for information already listed above."
-        )
-        _append_to_system_instruction(llm_request, context_note)
-
-
-def _handle_skill_injection(
-    callback_context: CallbackContext,
-    llm_request: LlmRequest,
-    user_message: str,
-) -> None:
-    """Detect matching skill and inject framework if it's the first turn or a topic change."""
-    # Detect skill from current message. Inject if topic changes or first turn.
-    has_model_turn = any(
-        getattr(content, "role", None) == "model"
-        for content in (llm_request.contents or [])
-    )
-
-    skill_name = detect_skill(user_message)
-    last_injected = callback_context.state.get(_LAST_SKILL_KEY)
-
-    # Decide whether to inject
-    is_first_turn = not has_model_turn
-    is_topic_switch = bool(skill_name and skill_name != last_injected)
-    should_inject = is_first_turn or is_topic_switch
-
-    if not should_inject or not skill_name:
-        _logger.debug("skill=NO_MATCH user_message=%r", user_message[:80])
-        return
-
-    skill_content = load_skill(skill_name)
-    if not skill_content:
-        return
-
-    _append_to_system_instruction(
-        llm_request,
-        f"\n\n---\n## Injected Framework: {skill_name}\n\n{skill_content}",
-    )
-    # Persist the injected skill so we don't re-inject it on the next turn.
-    callback_context.state[_LAST_SKILL_KEY] = skill_name
-    _logger.info("skill=%s injected", skill_name)
 
 
 def route_skill_callback(
@@ -689,12 +613,72 @@ def route_skill_callback(
        framework. Skipped on turns where the model has already responded to avoid
        mid-reasoning confusion and wasted tokens.
     """
-    user_message = _get_latest_user_message(llm_request)
+    # Find the latest user message in the conversation
+    user_message = ""
+    for content in reversed(llm_request.contents or []):
+        if getattr(content, "role", None) == "user":
+            for part in getattr(content, "parts", []) or []:
+                text = getattr(part, "text", None)
+                if text:
+                    user_message = text
+                    break
+        if user_message:
+            break
+
     if not user_message:
-        return
+        return None
 
     # ── 1. Context extraction & injection (every turn) ────────────────────────
-    _handle_context_extraction(callback_context, llm_request, user_message)
+    new_signals = _extract_context_signals(user_message)
+    if new_signals:
+        _logger.debug("context signals=%r", new_signals)
+        # Immutably merge new signals into stored context
+        stored = dict(callback_context.state.get(_USER_CONTEXT_KEY, {}))
+        stored.update(new_signals)
+        callback_context.state[_USER_CONTEXT_KEY] = stored
+
+    stored_context: dict[str, str] = callback_context.state.get(_USER_CONTEXT_KEY, {})
+    if stored_context:
+        lines = [
+            f"- {k.replace('_', ' ').title()}: {v}"
+            for k, v in stored_context.items()
+        ]
+        context_note = (
+            "\n\n---\n## Session Context\n"
+            + "\n".join(lines)
+            + "\nApply this context to tailor recommendations."
+            " Do not ask for information already listed above."
+        )
+        _append_to_system_instruction(llm_request, context_note)
 
     # ── 2. Skill injection: first turn OR topic change ─────────────────────────
-    _handle_skill_injection(callback_context, llm_request, user_message)
+    # Detect skill from current message. Inject if topic changes or first turn.
+    has_model_turn = any(
+        getattr(content, "role", None) == "model"
+        for content in (llm_request.contents or [])
+    )
+
+    skill_name = detect_skill(user_message)
+    last_injected = callback_context.state.get(_LAST_SKILL_KEY)
+
+    # Decide whether to inject
+    is_first_turn = not has_model_turn
+    is_topic_switch = bool(skill_name and skill_name != last_injected)
+    should_inject = is_first_turn or is_topic_switch
+
+    if not should_inject or not skill_name:
+        _logger.debug("skill=NO_MATCH user_message=%r", user_message[:80])
+        return None
+
+    skill_content = load_skill(skill_name)
+    if not skill_content:
+        return None
+
+    _append_to_system_instruction(
+        llm_request,
+        f"\n\n---\n## Injected Framework: {skill_name}\n\n{skill_content}",
+    )
+    # Persist the injected skill so we don't re-inject it on the next turn.
+    callback_context.state[_LAST_SKILL_KEY] = skill_name
+    _logger.info("skill=%s injected", skill_name)
+    return None
